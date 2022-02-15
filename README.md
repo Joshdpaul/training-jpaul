@@ -7,4 +7,4 @@ Cyn's readme info.
 
 More interesting information!
 
-I sure hope there is no one else editing this file!
+Crisis averted!
