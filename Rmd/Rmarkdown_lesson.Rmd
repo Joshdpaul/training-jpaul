@@ -1,0 +1,28 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Header
+
+## Subheader
+
+*Help! This sentence is about to fall over!*
+
+1.  Coffee
+2.  Coffee
+3.  **More coffee**
+
+```{r}
+yoyo <- c("yo1", "yo2")
+```
+
+```{r}
+class(yoyo)
+print(yoyo)
+```
+
