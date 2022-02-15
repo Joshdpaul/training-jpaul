@@ -7,22 +7,26 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Header
-
-## Subheader
-
-*Help! This sentence is about to fall over!*
-
-1.  Coffee
-2.  Coffee
-3.  **More coffee**
+## Read in data
 
 ```{r}
-yoyo <- c("yo1", "yo2")
-```
+bg_chem <- read.csv("../data/BGchem2008data.csv")
+````
+
+
+## Analysis
+
+
+## Plots
 
 ```{r}
-class(yoyo)
-print(yoyo)
+plot(bg_chem$CTD_Depth, bg_chem$CTD_Temperature)
 ```
+
+# Discussion
+
+Git is the version control software that tracks changes to files within a folder (repository).
+Github is the web service to store and share repositories. 
+
+Not limited to R files, but can be used with a variety of code text. Text files are best!
 
