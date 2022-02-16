@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Josh;s Research"
 output: html_document
 ---
 
@@ -7,22 +7,18 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Links to research projects / other pages
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+using the actual URL copied from github
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+[Data Tidying]("https://github.com/Joshdpaul/training-jpaul/blob/main/Rmd/Data_tidying.html")
 
-```{r cars}
-summary(cars)
-```
+or, the relative path of the github project
 
-## Including Plots
+[Data Tidying](Rmd/Data_tidying.html)
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+and
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+[R markdown Lesson](Rmd/Rmarkdown_lesson.html)
