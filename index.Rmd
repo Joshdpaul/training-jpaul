@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 using the actual URL copied from github
 
-[Data Tidying]("https://github.com/Joshdpaul/training-jpaul/blob/main/Rmd/Data_tidying.html")
+[Data Tidying](https://github.com/Joshdpaul/training-jpaul/blob/main/Rmd/Data_tidying.html)
 
 or, the relative path of the github project
 
