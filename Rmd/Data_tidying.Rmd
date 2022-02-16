@@ -1,0 +1,119 @@
+---
+title: "Data_tidying"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load libraries:
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(readr)
+```
+
+**Remember! Keyboard shortcut for codeblock is: Ctrl + Alt + i**
+
+Load the salmon by region catch data from the KNB data repository (https://knb.ecoinformatics.org/view/df35b.304.2)
+
+```{r}
+catch_original <- read_csv("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1")
+head(catch_original)
+```
+Lets remove the two last columns, we dont need them. 2 ways to do this (one is hashed out below):
+
+```{r}
+catch_data <- catch_original %>% 
+  #select(Region, Year, Chinook, Coho, Pink, Chum, Sockeye)
+  #or
+  select(-All, -notesRegCode)
+
+glimpse(catch_data)
+
+```
+
+Notice Chinook column class is a character instead of numeric!  ^^^^
+
+Try to change it to numeric ....
+
+```{r}
+catch_clean <- catch_data %>%
+  mutate(Chinook = as.numeric(Chinook))
+```
+
+Hmmm... now we need to find spurious characters in that Chinook column. Use the which() and the is.na() functions to look for and list rows in the column that are NA
+
+```{r}
+i <- which(is.na(catch_clean$Chinook))
+i
+```
+Instead of going back to the original data and fixing this weird value (and "I" instead of a 1), we can change it here and leave the raw data unedited. This is a more reproducible workflow.
+
+```{r}
+catch_clean <- catch_data %>%
+  mutate(Chinook = if_else(Chinook == "I", "1", Chinook)) %>%
+  mutate(Chinook = as.numeric(Chinook))
+
+glimpse(catch_clean)
+
+i <- which(is.na(catch_clean$Chinook))
+
+i
+```
+
+Now we can transform/transpose this data from a wide format to a long format
+```{r}
+catch_long <- catch_clean %>%
+  pivot_longer(cols = (-c(Region, Year)), names_to = "Species", values_to = "Catch")
+head(catch_clean)
+head(catch_long)
+```
+
+Now lets make it wide again
+```{r}
+catch_wide <- catch_long %>%
+  pivot_wider(names_from = Region, values_from = Catch)
+head(catch_wide)
+```
+
+## Split Apply Combine
+
+mean catch by region
+
+```{r}
+mean_region <- catch_long %>%
+  group_by(Region) %>%
+  summarise(catch_mean = mean(Catch))
+
+head(mean_region)
+```
+
+```{r}
+mean_region_species <- catch_long %>%
+  group_by(Region, Species) %>%
+  summarise(catch_mean = mean(Catch), n_years =  n())
+
+head(mean_region_species)
+```
+
+
+ Load the region table, which has more information about each region instead of just a region code
+ 
+```{r}
+region_defs <- read.csv("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.303.1") %>% 
+    select(code, mgmtArea)
+
+head(region_defs)
+```
+
+And then join the catch table to the region table using a LEFT join:
+
+```{r}
+catch_joined <- left_join(catch_long, region_defs, by = c("Region" = "code"))
+head(catch_joined)
+
+```
+
