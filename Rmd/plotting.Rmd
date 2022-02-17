@@ -1,5 +1,5 @@
 ---
-title: "Untitled1"
+title: "Plotting"
 output: html_document
 ---
 
@@ -39,15 +39,23 @@ annual_esc <- esc %>%
   mutate(Year = as.numeric(Year)) %>% 
   group_by(Species, SASAP.Region, Year) %>% 
   summarize(escapement = sum(DailyCount)) %>%
-  filter(Species == "Sockeye")
+  filter(Species %in% c("Chinook", "Sockeye", "Chum", "Coho", "Pink"))
   
 head(annual_esc)
 ```
 
+
 ```{r}
-head(esc)
-annual_esc <- esc %>%
-  separate(sampleDate, into = c("Year", "Month", "Day"), sep = "-")
-head(annual_esc)
+ggplot(annual_esc, mapping = aes(x = Species, y = escapement)) +
+  geom_col()
+```
+```{r}
+kodiak_esc <- annual_esc %>%
+  filter(SASAP.Region == "Kodiak")
+```
+```{r}
+ggplot(kodiak_esc, mapping = aes(x = Year, y = escapement, color = Species)) +
+  geom_line() +
+  geom_point()
 ```
 
