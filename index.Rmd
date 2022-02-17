@@ -22,3 +22,9 @@ and
 
 
 [R markdown Lesson](Rmd/Rmarkdown_lesson.html)
+
+
+plus
+
+
+[Plotting](Rmd/plotting.html)
