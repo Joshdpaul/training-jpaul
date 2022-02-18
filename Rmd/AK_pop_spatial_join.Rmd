@@ -1,0 +1,118 @@
+---
+title: "SpatialAnalysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load libraries. "sf" is "simple features"
+
+```{r}
+library(sf)
+library(ggplot2)
+library(leaflet)
+library(scales)
+library(ggmap)
+library(dplyr)
+```
+Read the shapefile, and plot it too
+
+```{r}
+ak_regions <- read_sf("shapefiles/ak_regions_simp.shp")
+head(ak_regions)
+plot(ak_regions)
+```
+
+Check the coordinate reference system
+
+```{r}
+st_crs(ak_regions)
+```
+
+We can convert this to Alaska Albers EPSG 3338 very easily:
+
+```{r}
+ak_regions_3338 <- ak_regions %>%
+  st_transform(crs = 3338)
+
+st_crs(ak_regions_3338)
+```
+Now plot it
+
+```{r}
+ak_regions_3338 <- ak_regions %>%
+  st_transform(crs = 3338)
+
+plot(ak_regions_3338)
+```
+Filter by the southeast region, and plot for fun:
+
+```{r}
+ak_regions_3338_SE <- ak_regions_3338 %>%
+  filter(region == "Southeast")
+
+plot(ak_regions_3338_SE)
+```
+
+Read in population data from a csv....this is not a point data file yet, but just a table with coordinates
+
+```{r}
+pop <- read.csv("shapefiles/alaska_population.csv")
+
+head(pop)
+```
+
+Turn this from a dataframe to an SF object using the lat lng fields. You need to know the CRS of these fields to make the conversion!
+
+```{r}
+pop_4326 <- st_as_sf(pop, 
+                  coords = c('lng', 'lat'),
+                  crs = 4326,
+                  remove = F)
+
+head(pop_4326)
+```
+
+Then transform the CRS to match the AK regions shapefile
+
+```{r}
+pop_3338 <- st_transform(pop_4326, crs = 3338)
+
+head(pop_3338)
+```
+
+Now we can do a spatial join, to find the regions that the points are WITHIN:
+
+```{r}
+pop_joined <- st_join(pop_3338, ak_regions_3338, join = st_within)
+
+head(pop_joined)
+```
+
+Now we can group by and summarize using the regular tidyverse tools that we would use for tables and data frames. The spatial analysis has already been done, and we are just going to group by region and sum the populations in those groups. When converting to a data frame, the geometry columns are automatically "unsticked" and dropped with the group by function.
+
+```{r}
+pop_region <- pop_joined %>% 
+  as.data.frame() %>% 
+  group_by(region) %>% 
+  summarise(total_pop = sum(population))
+
+head(pop_region)
+```
+
+Now we can join this back to the original AK regions shapefile
+
+```{r}
+pop_region_3338 <- left_join(ak_regions_3338, pop_region)
+
+head(pop_region_3338)
+```
+
+Then plot it
+
+```{r}
+plot(pop_region_3338["total_pop"])
+```
+
