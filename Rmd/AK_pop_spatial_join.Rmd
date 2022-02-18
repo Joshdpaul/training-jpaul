@@ -116,4 +116,8 @@ Then plot it
 plot(pop_region_3338["total_pop"])
 ```
 
+Now write the new shapefile that includes the otal population data column
+```{r}
+write_sf(pop_region_3338, "ak_regions_pop.shp", delete_layer = TRUE)
+```
 
